@@ -1,0 +1,65 @@
+name: Update Formula
+on:
+  repository_dispatch:
+    types: [update-formula]
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update nanograph formula
+        env:
+          TAG: ${{ github.event.client_payload.tag }}
+        run: |
+          VERSION="${TAG#v}"
+          REPO="aaltshuler/nanograph"
+          BASE_URL="https://github.com/${REPO}/releases/download/${TAG}"
+
+          # Download SHA256 checksums from the release
+          curl -sL "${BASE_URL}/nanograph-${TAG}-aarch64-apple-darwin.tar.gz.sha256" | awk '{print $1}' > /tmp/sha256-arm64
+          curl -sL "${BASE_URL}/nanograph-${TAG}-x86_64-apple-darwin.tar.gz.sha256" | awk '{print $1}' > /tmp/sha256-x64
+
+          SHA_ARM64=$(cat /tmp/sha256-arm64)
+          SHA_X64=$(cat /tmp/sha256-x64)
+
+          cat > Formula/nanograph.rb << RUBY
+          class Nanograph < Formula
+            desc "Embedded typed property graph database — no server, schema-as-code"
+            homepage "https://github.com/${REPO}"
+            version "${VERSION}"
+            license "MIT"
+
+            on_macos do
+              on_arm do
+                url "${BASE_URL}/nanograph-${TAG}-aarch64-apple-darwin.tar.gz"
+                sha256 "${SHA_ARM64}"
+              end
+              on_intel do
+                url "${BASE_URL}/nanograph-${TAG}-x86_64-apple-darwin.tar.gz"
+                sha256 "${SHA_X64}"
+              end
+            end
+
+            def install
+              bin.install "nanograph"
+            end
+
+            test do
+              assert_match version.to_s, shell_output("#{bin}/nanograph version")
+            end
+          end
+          RUBY
+
+          # Remove leading whitespace from heredoc
+          sed -i 's/^          //' Formula/nanograph.rb
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/nanograph.rb
+          git diff --cached --quiet && exit 0
+          git commit -m "nanograph ${TAG#v}"
+          git push
