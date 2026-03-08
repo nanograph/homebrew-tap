@@ -5,7 +5,7 @@ class Nanograph < Formula
   license "MIT"
 
   url "https://github.com/aaltshuler/nanograph/releases/download/v0.9.1/nanograph-v0.9.1-aarch64-apple-darwin.tar.gz"
-  sha256 "043f1eab15a3318066e3051328d6b26c8992207f67d6f6f1305ee64414e560c0"
+  sha256 "033cbd31be5f5e392639508a83bee82bc09126c07f0ee54bb601d1811a174a67"
 
   depends_on arch: :arm64
 
