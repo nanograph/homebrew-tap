@@ -1,11 +1,11 @@
 class Nanograph < Formula
   desc "Embedded typed property graph database — no server, schema-as-code"
   homepage "https://github.com/aaltshuler/nanograph"
-  version "1.1.1"
+  version "1.1.2"
   license "MIT"
 
-  url "https://github.com/aaltshuler/nanograph/releases/download/v1.1.1/nanograph-v1.1.1-aarch64-apple-darwin.tar.gz"
-  sha256 "4fb8d14bda6cd3e2d484a711b282b035fbbfffa4f88ae1ad1ba43dbab95b720e"
+  url "https://github.com/aaltshuler/nanograph/releases/download/v1.1.2/nanograph-v1.1.2-aarch64-apple-darwin.tar.gz"
+  sha256 "96c43db4f3d3d43ed1efdecb5a1333f8d5633927e7fb9c1080c8ee6a180755df"
 
   depends_on arch: :arm64
 
